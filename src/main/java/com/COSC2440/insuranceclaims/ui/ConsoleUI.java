@@ -96,7 +96,7 @@ public class ConsoleUI {
         String claimId = scanner.nextLine();
 
         // Assuming the path to your claims CSV file - adjust as necessary
-        String claimsFilePath = "path/to/your/claims.csv";
+        String claimsFilePath = "src/main/resources/claims.csv";
         Claim claim = FileManager.readClaimById(claimsFilePath, claimId);
 
         if (claim != null) {

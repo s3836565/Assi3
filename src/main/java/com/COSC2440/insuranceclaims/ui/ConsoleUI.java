@@ -85,9 +85,35 @@ public class ConsoleUI {
     }
 
 
-    private void addCustomer(Scanner scanner) {
-        // Implementation remains the same
+    public void addCustomer(Scanner scanner) {
+        System.out.println("Enter PolicyHolder's ID:");
+        String id = scanner.nextLine();
+
+        System.out.println("Enter PolicyHolder's Full Name:");
+        String fullName = scanner.nextLine();
+
+        System.out.println("Enter PolicyHolder's Insurance Card Number:");
+        String insuranceCardNumber = scanner.nextLine();
+
+        // Assuming you have a way to specify or find a Customer object and PolicyHolder
+        // For the purpose of this example, I'll assume the new PolicyHolder is the customer.
+        // You'll need to adapt this logic based on your application's requirements.
+        PolicyHolder policyHolder = new PolicyHolder(id, fullName); // Simplified constructor call
+
+        // Assuming you have logic to determine these values
+        Date cardIssueDate = new Date(); // Example: current date as issue date
+
+        // Create the InsuranceCard with all required parameters
+        InsuranceCard insuranceCard = new InsuranceCard(insuranceCardNumber, policyHolder, policyHolder, cardIssueDate);
+
+        // Assuming the policyHolder list and setting the InsuranceCard
+        policyHolder.setInsuranceCard(insuranceCard); // Make sure such a setter exists or adjust accordingly
+        customers.add(policyHolder); // Add the policyHolder to the list of customers
+
+        System.out.println("New PolicyHolder added.");
     }
+
+
 
     private void viewClaims() {
         // Assuming implementation exists for claimManager.getAll()

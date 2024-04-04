@@ -29,12 +29,14 @@ public class PolicyHolder extends Customer {
     }
     @Override
     public String toString() {
-        // Assuming PolicyHolder has fields for id, fullName, etc.
+        String insuranceCardNumber = (getInsuranceCard() != null) ? getInsuranceCard().getCardNumber() : "No Insurance Card";
         return "PolicyHolder{" +
                 "id='" + getId() + '\'' +
                 ", fullName='" + getFullName() + '\'' +
-                // Include other relevant fields
+                ", insuranceCardNumber='" + insuranceCardNumber + '\'' +
+                // Include other relevant fields if necessary
                 '}';
     }
+
 
 }

@@ -1,0 +1,15 @@
+ID,FullName,Type,PolicyHolderID,InsuranceCardNumber
+c-0000001,John Doe,PolicyHolder,,1111111111
+c-0000002,Jane Rogan,PolicyHolder,,2222222222
+c-0000003,Alice Johnson,PolicyHolder,,3333333333
+c-0000005,Zlatko Marinela,Dependent,c-0000003,,
+c-0000006,Tayla Moses,Dependent,c-0000001,,
+c-0000007,Maksym Inga,Dependent,c-0000002,,
+c-0000008,Bob Johnson,Dependent,c-0000003,,
+c-0000009,Scotty Aguilar,Dependent,c-0000001,,
+c-0000010,Esther Howe,Dependent,c-0000002,,
+c-0000011,Roderick Weiss,Dependent,c-0000003,,
+c-0000012,Alicia Wall,Dependent,c-0000002,,
+c-0000013,Santos Flores,Dependent,c-0000002,,
+c-0000014,Kitty Clarke,Dependent,c-0000003,,
+c-0000015,Shawn Sparks,Dependent,c-0000001,,

@@ -46,4 +46,13 @@ public abstract class Customer {
     }
 
     // Methods like addClaim, removeClaim, getClaim here
+    @Override
+    public String toString() {
+        String cardNumber = (this.insuranceCard != null) ? this.insuranceCard.getCardNumber() : "None";
+        return "Customer{" +
+                "id='" + getId() + '\'' + // Assuming there's a getId() method
+                ", fullName='" + getFullName() + '\'' + // Assuming there's a getFullName() method
+                ", insuranceCardNumber='" + cardNumber + '\'' +
+                '}';
+    }
 }

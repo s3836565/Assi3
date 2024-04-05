@@ -12,6 +12,12 @@ public abstract class Customer {
         this.fullName = fullName;
         this.insuranceCard = insuranceCard;
     }
+    // Overloaded constructor without InsuranceCard
+    public Customer(String id, String fullName) {
+        this.id = id;
+        this.fullName = fullName;
+        this.insuranceCard = null; // No insurance card provided
+    }
 
     public String getId() {
         return id;

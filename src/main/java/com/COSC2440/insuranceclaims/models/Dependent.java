@@ -7,6 +7,11 @@ public class Dependent extends Customer {
         super(id, fullName, insuranceCard);
         this.policyHolder = policyHolder;
     }
+    public Dependent(String id, String fullName, PolicyHolder policyHolder) {
+        super(id, fullName);
+        this.policyHolder = policyHolder;
+        this.insuranceCard = null; // Initially, there's no insurance card
+    }
 
     // Getters and setters for policyHolder
     public PolicyHolder getPolicyHolder() {
@@ -22,6 +27,8 @@ public class Dependent extends Customer {
 
     @Override
     public String toString() {
+        // Assuming the Customer class (superclass of Dependent) holds an InsuranceCard instance named 'insuranceCard'.
+        // This instance is accessed via a getter method defined in Customer or Dependent (getInsuranceCard()).
         String cardNumber = (this.getInsuranceCard() != null) ? this.getInsuranceCard().getCardNumber() : "None";
         return "Dependent{" +
                 "id='" + getId() + '\'' +
@@ -30,5 +37,5 @@ public class Dependent extends Customer {
                 ", policyHolder='" + (this.getPolicyHolder() != null ? this.getPolicyHolder().getFullName() : "No policy holder") + '\'' +
                 '}';
     }
-    // Other methods...
+
 }

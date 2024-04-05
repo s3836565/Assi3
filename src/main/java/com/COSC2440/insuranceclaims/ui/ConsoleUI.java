@@ -21,6 +21,7 @@ import java.io.BufferedReader;
 import java.io.PrintWriter;
 import java.io.FileNotFoundException;
 import java.io.File;
+import java.text.SimpleDateFormat;
 
 public class ConsoleUI {
     private final SimpleClaimProcessManager claimManager;
@@ -44,7 +45,8 @@ public class ConsoleUI {
             System.out.println("3. View Claims");
             System.out.println("4. Add Claim");
             System.out.println("5. Find and Display Claim by ID");
-            System.out.println("6. Exit");
+            System.out.println("6. Add Dependent");
+            System.out.println("7. Exit");
 
             System.out.print("Enter your choice: ");
             int choice = scanner.nextInt();
@@ -67,6 +69,9 @@ public class ConsoleUI {
                     findAndDisplayClaim(scanner);
                     break;
                 case 6:
+                    addDependent(scanner);
+                    break;
+                case 7:
                     running = false;
                     System.out.println("Exiting the system. Goodbye!");
                     break;
@@ -88,7 +93,6 @@ public class ConsoleUI {
     }
     private void saveCustomersToCSV(String filePath, List<Customer> customers) {
         try (PrintWriter writer = new PrintWriter(new File(filePath))) {
-            // Writing the header row
             StringBuilder sb = new StringBuilder();
             sb.append("ID,FullName,Type,PolicyHolderID,InsuranceCardNumber\n");
 
@@ -99,18 +103,18 @@ public class ConsoleUI {
                 sb.append(',');
 
                 if (customer instanceof PolicyHolder) {
-                    sb.append("PolicyHolder,");
-                    sb.append(","); // Placeholder for PolicyHolderID, always empty for a PolicyHolder
-                    if (((PolicyHolder) customer).getInsuranceCard() != null) {
-                        sb.append(((PolicyHolder) customer).getInsuranceCard().getCardNumber());
-                    }
-                    sb.append(","); // Ensuring the structure is maintained even if the number is missing
+                    sb.append("PolicyHolder,,"); // Combines the type and the empty PolicyHolderID field
+                    // Retrieves and appends the InsuranceCardNumber if available, otherwise appends an empty string
+                    sb.append(((PolicyHolder) customer).getInsuranceCard() != null ? ((PolicyHolder) customer).getInsuranceCard().getCardNumber() : "");
                 } else if (customer instanceof Dependent) {
+                    Dependent dependent = (Dependent) customer;
                     sb.append("Dependent,");
-                    sb.append(((Dependent) customer).getPolicyHolder().getId());
-                    sb.append(",,"); // Dependent does not have an InsuranceCardNumber, adding placeholders
+                    sb.append(dependent.getPolicyHolder().getId()); // Appends the associated PolicyHolder's ID
+                    sb.append(","); // Ends the PolicyHolderID field
+                    // For a Dependent, we check if they have their own InsuranceCard and append the number if available
+                    sb.append(dependent.getInsuranceCard() != null ? dependent.getInsuranceCard().getCardNumber() : "");
                 }
-                sb.append('\n');
+                sb.append('\n'); // New line at the end of each customer record
             }
 
             writer.write(sb.toString());
@@ -119,6 +123,7 @@ public class ConsoleUI {
             e.printStackTrace();
         }
     }
+
 
 
 
@@ -153,6 +158,77 @@ public class ConsoleUI {
         System.out.println("New PolicyHolder added.");
     }
 
+    private Date parseInsuranceCardExpirationDate(Scanner scanner) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        dateFormat.setLenient(false); // This makes the date parsing strict
+        Date expirationDate = null;
+        while (expirationDate == null) {
+            System.out.println("Enter Insurance Card Expiration Date (dd/MM/yyyy):");
+            String expirationDateStr = scanner.nextLine();
+            try {
+                expirationDate = dateFormat.parse(expirationDateStr);
+            } catch (ParseException e) {
+                System.out.println("Invalid date format. Please use the dd/MM/yyyy format, e.g., 31/12/2025.");
+            }
+        }
+        return expirationDate;
+    }
+    private PolicyHolder findAssociatedPolicyHolder(String policyHolderId) {
+        for (Customer customer : customers) {
+            if (customer instanceof PolicyHolder && customer.getId().equals(policyHolderId)) {
+                return (PolicyHolder) customer;
+            }
+        }
+        return null;
+    }
+
+    private void addDependent(Scanner scanner) {
+        System.out.println("Enter Dependent's ID:");
+        String id = scanner.nextLine();
+
+        System.out.println("Enter Dependent's Full Name:");
+        String fullName = scanner.nextLine();
+
+        System.out.println("Enter Associated PolicyHolder's ID:");
+        String policyHolderId = scanner.nextLine();
+        PolicyHolder associatedPolicyHolder = findAssociatedPolicyHolder(policyHolderId);
+        if (associatedPolicyHolder == null) {
+            System.out.println("No policyholder found with the provided ID. Cannot add the dependent.");
+            return;
+        }
+
+        // Assuming the Dependent class can initially be created without an InsuranceCard
+        Dependent newDependent = new Dependent(id, fullName, associatedPolicyHolder); // Adjusted constructor call
+
+        // Additional steps to collect InsuranceCard details
+        System.out.println("Enter Dependent's Insurance Card Number:");
+        String insuranceCardNumber = scanner.nextLine();
+
+        Date expirationDate = parseInsuranceCardExpirationDate(scanner);
+
+        // Now that we have all required details, create the InsuranceCard
+        InsuranceCard insuranceCard = new InsuranceCard(insuranceCardNumber, newDependent, associatedPolicyHolder, expirationDate);
+
+        // Assuming Dependent has a method to set the InsuranceCard
+        newDependent.setInsuranceCard(insuranceCard);
+
+        customers.add(newDependent);
+        saveCustomersToCSV("src/main/resources/backup/customers.csv", customers);
+        System.out.println("New Dependent added.");
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     private void viewClaims() {
@@ -167,6 +243,15 @@ public class ConsoleUI {
             }
         }
     }
+
+
+
+
+
+
+
+
+
 
     private void addClaim(Scanner scanner) {
         System.out.println("Please enter the following details for the new claim:");

@@ -7,7 +7,7 @@ import com.COSC2440.insuranceclaims.models.Customer;
 import com.COSC2440.insuranceclaims.utils.FileManager;
 import com.COSC2440.insuranceclaims.models.InsuranceCard;
 import com.COSC2440.insuranceclaims.models.PolicyHolder;
-
+import com.COSC2440.insuranceclaims.models.Dependent;
 import java.text.ParseException;
 import java.io.FileReader;
 import java.text.SimpleDateFormat;
@@ -18,6 +18,9 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.io.IOException;
 import java.io.BufferedReader;
+import java.io.PrintWriter;
+import java.io.FileNotFoundException;
+import java.io.File;
 
 public class ConsoleUI {
     private final SimpleClaimProcessManager claimManager;
@@ -37,7 +40,7 @@ public class ConsoleUI {
         while (running) {
             System.out.println("\nInsurance Claims Management System");
             System.out.println("1. View Customers");
-            System.out.println("2. Add Customer");
+            System.out.println("2. Add PolicyHolder");
             System.out.println("3. View Claims");
             System.out.println("4. Add Claim");
             System.out.println("5. Find and Display Claim by ID");
@@ -83,6 +86,43 @@ public class ConsoleUI {
             }
         }
     }
+    private void saveCustomersToCSV(String filePath, List<Customer> customers) {
+        try (PrintWriter writer = new PrintWriter(new File(filePath))) {
+            // Writing the header row
+            StringBuilder sb = new StringBuilder();
+            sb.append("ID,FullName,Type,PolicyHolderID,InsuranceCardNumber\n");
+
+            for (Customer customer : customers) {
+                sb.append(customer.getId());
+                sb.append(',');
+                sb.append(customer.getFullName());
+                sb.append(',');
+
+                if (customer instanceof PolicyHolder) {
+                    sb.append("PolicyHolder,");
+                    sb.append(","); // Placeholder for PolicyHolderID, always empty for a PolicyHolder
+                    if (((PolicyHolder) customer).getInsuranceCard() != null) {
+                        sb.append(((PolicyHolder) customer).getInsuranceCard().getCardNumber());
+                    }
+                    sb.append(","); // Ensuring the structure is maintained even if the number is missing
+                } else if (customer instanceof Dependent) {
+                    sb.append("Dependent,");
+                    sb.append(((Dependent) customer).getPolicyHolder().getId());
+                    sb.append(",,"); // Dependent does not have an InsuranceCardNumber, adding placeholders
+                }
+                sb.append('\n');
+            }
+
+            writer.write(sb.toString());
+        } catch (FileNotFoundException e) {
+            System.out.println("An error occurred while saving to CSV.");
+            e.printStackTrace();
+        }
+    }
+
+
+
+
 
 
     public void addCustomer(Scanner scanner) {
@@ -109,7 +149,7 @@ public class ConsoleUI {
         // Assuming the policyHolder list and setting the InsuranceCard
         policyHolder.setInsuranceCard(insuranceCard); // Make sure such a setter exists or adjust accordingly
         customers.add(policyHolder); // Add the policyHolder to the list of customers
-
+        saveCustomersToCSV("src/main/resources/customers.csv", customers);
         System.out.println("New PolicyHolder added.");
     }
 

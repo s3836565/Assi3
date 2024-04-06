@@ -1,7 +1,7 @@
 package com.COSC2440.insuranceclaims.models;
 import java.util.ArrayList;
 import java.util.List;
-public abstract class Customer {
+public class Customer {
     protected String id;
     protected String fullName;
     protected InsuranceCard insuranceCard;

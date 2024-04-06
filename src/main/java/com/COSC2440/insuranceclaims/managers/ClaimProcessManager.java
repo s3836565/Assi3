@@ -10,4 +10,8 @@ public interface ClaimProcessManager {
     void delete(String claimId);
     Claim getOne(String claimId);
     List<Claim> getAll();
+
+
+
+
 }
